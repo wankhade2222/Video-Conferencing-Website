@@ -11,7 +11,7 @@ export const connectToSocket = (server) => {
       allowedHeaders: ["*"],
       credentials: true,
     },
-  });
+  })
 
   io.on("conection", (socket) => {
     console.log("SOMETHING CONNECTED");
@@ -29,7 +29,7 @@ export const connectToSocket = (server) => {
           "user-joined",
           socket.id,
           connections[path]
-        );
+        )
       }
 
       if (messages[path] != undefined) {
@@ -39,14 +39,14 @@ export const connectToSocket = (server) => {
             messages[path][a]["data"],
             messages[path][a]["sender"],
             messages[path][a]["socket-id-sender"]
-          );
+          )
         }
       }
-    });
+    })
 
     socket.on("signal", (toId, messages) => {
       io.to(toId).emit("signal", socket.id, message);
-    });
+    })
 
     socket.io("chat-messages", (data, sender) => {
       const [matchingRoom, found] = Object.entries(connections).reduce(
@@ -56,8 +56,7 @@ export const connectToSocket = (server) => {
           }
           return [room, isFound];
         },
-        ["", false]
-      );
+        ["", false]);
 
       if (found === true) {
         if (messages[matchingRoom] === undefined) {
