@@ -61,7 +61,14 @@ export const connectToSocket = (server) => {
     })
 
     socket.on("disconnect",()=>{
+          
+      var diffTime = Math.abs(timeOnline[socket.id] - new Date())
 
+      var key 
+
+      for(const[k,v] of JSON.parse(JSON.stringify(Object.entries(connections)))){
+                 
+      }
     })
   });
 
