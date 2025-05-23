@@ -9,7 +9,7 @@ export const connectToSocket = (server) => {
     cors: {
       origin: "*",
       methods: ["GET", "POST"],
-      allowedHeaders: ["*"],
+      allowedHeaders: ["Content-Type"],
       credentials: true,
     },
   });
