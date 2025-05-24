@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Badge, IconButton, TextField } from "@mui/material";
 import { Button } from "@mui/material";
-import io, { connect } from "socket.io-client";
+import io from "socket.io-client";
 import styles from "../styles/videoComponent.module.css";
 import VideocamIcon from "@mui/icons-material/Videocam";
 import VideocamOffIcon from "@mui/icons-material/VideocamOff";
@@ -11,6 +11,8 @@ import MicOffIcon from "@mui/icons-material/MicOff";
 import ScreenShareIcon from "@mui/icons-material/ScreenShare";
 import StopScreenShareIcon from "@mui/icons-material/StopScreenShare";
 import ChatIcon from "@mui/icons-material/Chat";
+
+
 const server_url = "http://localhost:8000";
 
 var connections = {};
@@ -263,7 +265,6 @@ function VideoMeetComponent() {
         })
     );
   };
-  let addMessage = () => {};
   let gotMessageFromServer = (fromId, message) => {
     var signal = JSON.parse(message);
 
@@ -422,7 +423,23 @@ function VideoMeetComponent() {
     setAudio(!audio);
   };
 
-  let sendMessage = () => {};
+  const addMessage = (data, sender, socketIdSender) => {
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      { sender: sender, data: data },
+    ]);
+    if (socketIdSender !== socketIdRef.current) {
+      setNewMessages((prevNewMessages) => prevNewMessages + 1);
+    }
+  };
+
+  let sendMessage = () => {
+    console.log(socketRef.current);
+    socketRef.current.emit("chat-message", message, username);
+    setMessage("");
+
+    // this.setState({ message: "", sender: username })
+  };
 
   useEffect(() => {
     if (screen !== undefined) {
@@ -443,13 +460,13 @@ function VideoMeetComponent() {
     }
   };
 
-  // let openChat = ()=>{
-  //      setModel(true);
-  //      setNewMessages(0);
-  // }
-  // let closeChat = ()=>{
-  //   setModel(false);
-  // }
+  let openChat = ()=>{
+       setModal(true);
+       setNewMessages(0);
+  }
+  let closeChat = ()=>{
+    setModal(false);
+  }
 
   let handleMessage = (e) => {
     setMessage(e.target.value);
@@ -511,12 +528,14 @@ function VideoMeetComponent() {
                   <h1>Chat</h1>
                   <div className={styles.chattingDisplay}>
                     {messages.length !== 0 ? (
-                      messages.map((item, index) => (
+                      messages.map((item, index) => {
+                        return(
                         <div style={{ marginBottom: "20px" }} key={index}>
                           <p style={{ fontWeight: "bold" }}>{item.sender}</p>
                           <p>{item.data}</p>
                         </div>
-                      ))
+                        )
+                      })
                     ) : (
                       <p>No Messages Yet</p>
                     )}
